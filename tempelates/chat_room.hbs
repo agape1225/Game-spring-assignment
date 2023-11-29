@@ -58,40 +58,24 @@
       $(() => {
         /** Socket Starts **/
         const socket = io();
+        let roomName = $('#select-room').val();
+        console.log("join_room_" + {{roomNum}});
         
-        // 클라이언트에서 reuqest_message 프로토콜로 id='m' 의 input 값을 보낸다.
-        $('#msg-send').click(() => {
-          socket.emit('request_message', $('#m').val());
-          $('#m').val('');
-          return false; 
-        });
+        socket.emit('join_room_' + {{roomNum}}, "room_" + {{roomNum}});
 
-        $('#select-room-button').click(() => {
-          let roomName = $('#select-room').val();
-          if(roomName === "none") 
-            return alert("방을 선택해주세요.");
-          socket.emit('req_join_room', roomName)
+        socket.on('join_room_' + {{roomNum}}, (res) => {
+          $('#room-messages').prepend($('<li>').text(res));
         });
-
         $('#room-msg-send').click(() => {
-          socket.emit('req_room_message', $('#room-message').val());
+          socket.emit('req_room_message_'+ {{roomNum}}, $('#room-message').val());
           $('#room-message').val('');
           return false;
         });
 
-        socket.on('response_message', (res) => {
-          $('#messages').prepend($('<li>').text(res));
-        });
-
-        socket.on('noti_join_room', (res) => {
-          $('#room-messages').prepend($('<li>').text(res));
-        });
-
-        socket.on('noti_room_message', (res) => {
+        socket.on('response_room_message_' + {{roomNum}}, (res) => {
           console.log(res);
           $('#room-messages').prepend($('<li>').text(res));
         });
-
       });   
     </script>
     

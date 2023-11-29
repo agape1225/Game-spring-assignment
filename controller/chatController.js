@@ -16,7 +16,7 @@ module.exports = (server, app) => {
     });
 
     // 방참여 요청
-    socket.on('req_join_room', async (msg) => {
+    socket.on('join_room_1', async (msg) => {
         let roomName = 'Room_' + msg;
         if(!rooms.includes(roomName)) {
             rooms.push(roomName);
@@ -25,15 +25,15 @@ module.exports = (server, app) => {
         }
         socket.join(roomName);
         //console.log(roomName);
-        io.to(roomName).emit('noti_join_room', "방에 입장하였습니다.");
+        io.to(roomName).emit('response_room_message_1', "방에 입장하였습니다.");
     });
 
     // 채팅방에 채팅 요청
-    socket.on('req_room_message', async(msg) => {
+    socket.on('req_room_message_1', async(msg) => {
         let userCurrentRoom = getUserCurrentRoom(socket);
         //console.log(msg);
         console.log(userCurrentRoom);
-        io.to(userCurrentRoom).emit('noti_room_message', msg);
+        io.to(userCurrentRoom).emit('response_room_message_1', msg);
     });
 
     socket.on('disconnect', async () => {
