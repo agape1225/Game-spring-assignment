@@ -12,11 +12,11 @@
 
 <body>
     <div data-include-path="html/header.html"></div>
- 
+
     <script>
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             var allElements = document.getElementsByTagName('*');
-            Array.prototype.forEach.call(allElements, function(el) {
+            Array.prototype.forEach.call(allElements, function (el) {
                 var includePath = el.dataset.includePath;
                 if (includePath) {
                     var xhttp = new XMLHttpRequest();
@@ -30,12 +30,20 @@
                 }
             });
         });
- 
+
     </script>
 
     <h1>rooms</h1>
     <p>{{naming}}</p>
+    <ul>
+        <li>
+            <a href="/chatRoom?roomNum=1">room number1</a>
 
+        </li>
+        <li>
+            <a href="/chatRoom?roomNum=2">room number2</a>
+        </li>
+    </ul>
 </body>
 
 </html>
