@@ -21,11 +21,15 @@ app.use(express.static(publicPath))
 
 
 app.get('/signup', (req, res) => {
-    res.render('signup')
+    res.render('signup');
 })
 app.get('/', (req, res) => {
-    res.render('login')
+    res.render('login');
 })
+app.get('/logout', (req, res) => {
+    return res.redirect("/");
+})
+
 
 
 
@@ -34,7 +38,7 @@ app.get('/', (req, res) => {
 // })
 
 app.post('/signup', async (req, res) => {
-    
+
     // const data = new LogInCollection({
     //     name: req.body.name,
     //     password: req.body.password
@@ -48,10 +52,10 @@ app.post('/signup', async (req, res) => {
     console.log(data);
     const checking = await LogInCollection.findOne({ name: req.body.name })
     console.log(checking);
-    if(checking === null){
+    if (checking === null) {
         await LogInCollection.insertMany([data])
     }
-    else{
+    else {
         res.send("user details already exists")
     }
     return res.redirect("/");
@@ -61,14 +65,14 @@ app.post('/signup', async (req, res) => {
     // }
     // else{
     //     await LogInCollection.insertMany([data])
-        
+
     // }
-//    try{
-    
-//    }
-//    catch{
-//     res.send("wrong inputs")
-//    }
+    //    try{
+
+    //    }
+    //    catch{
+    //     res.send("wrong inputs")
+    //    }
 })
 
 
@@ -79,8 +83,8 @@ app.post('/login', async (req, res) => {
 
         if (check.password === req.body.password) {
             //res.status(201).render("home", { naming: `${req.body.password}+${req.body.name}` })
-            res.status(201).render("chat_room", { naming: `${req.body.password}+${req.body.name}` })
-            
+            res.status(201).render("rooms", { naming: `${req.body.password}+${req.body.name}` })
+
         }
 
         else {
@@ -88,16 +92,43 @@ app.post('/login', async (req, res) => {
         }
 
 
-    } 
-    
+    }
+
     catch (e) {
 
         res.send("wrong details")
-        
+
 
     }
 
 
+})
+
+app.get('/rooms', async (req, res) => {
+    try {
+        res.status(201).render("rooms", { naming: `${req.body.password}+${req.body.name}` })
+    }
+    catch (e) {
+        res.send("wrong details")
+    }
+})
+
+app.get('/users', async (req, res) => {
+    try {
+        res.status(201).render("users", { naming: `${req.body.password}+${req.body.name}` })
+    }
+    catch (e) {
+        res.send("wrong details")
+    }
+})
+
+app.get('/friends', async (req, res) => {
+    try {
+        res.status(201).render("friends", { naming: `${req.body.password}+${req.body.name}` })
+    }
+    catch (e) {
+        res.send("wrong details")
+    }
 })
 
 
