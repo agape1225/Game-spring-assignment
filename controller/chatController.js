@@ -1,63 +1,84 @@
 const socket = require('socket.io');
+const session = require("express-session");
+const roomsOneList = []
+const roomsTwoList = []
 const rooms = []
+
 module.exports = (server, app) => {
-  const io = socket(server, {
-    cors: {
-      origin: '*',
-      credentials: true,
-    },
-  });
-  app.set('socket.io', io);
-
-  io.on('connection', (socket)=>{
-    socket.on('request_message', (msg) => {
-        // response_message로 접속중인 모든 사용자에게 msg 를 담은 정보를 방출한다.
-        io.emit('response_message', msg);
+    const sessionMiddleware = session({
+        secret: "changeit",
+        resave: true,
+        saveUninitialized: true,
     });
 
-    // 방참여 요청
-    socket.on('req_join_room', async (msg) => {
-        let roomName = 'Room_' + msg;
-        if(!rooms.includes(roomName)) {
-            rooms.push(roomName);
-        }else{
-            
-        }
-        socket.join(roomName);
-        //console.log(roomName);
-        io.to(roomName).emit('noti_join_room', "방에 입장하였습니다.");
+    app.use(sessionMiddleware);
+    const io = socket(server, {
+        cors: {
+            origin: '*',
+            credentials: true,
+        },
     });
 
-    // 채팅방에 채팅 요청
-    socket.on('req_room_message', async(msg) => {
-        let userCurrentRoom = getUserCurrentRoom(socket);
-        //console.log(msg);
-        console.log(userCurrentRoom);
-        io.to(userCurrentRoom).emit('noti_room_message', msg);
+    app.set('socket.io', io);
+
+    //start socket
+    io.on('connection', (socket) => {
+
+        // join to room1
+        socket.on('join_room_1', async (msg) => {
+            let roomName = 'Room_' + msg;
+            if (!rooms.includes(roomName)) {
+                //insert room number to list
+                rooms.push(roomName);
+            }
+            socket.join(roomName);
+            io.to(roomName).emit('response_room_message_1', "방에 입장하였습니다.");
+        });
+
+        // chat to room1
+        socket.on('req_room_message_1', async (msg) => {
+            let userCurrentRoom = getUserCurrentRoom(socket);
+            io.to(userCurrentRoom).emit('response_room_message_1', msg);
+        });
+
+        // join to room2
+        socket.on('join_room_2', async (msg) => {
+            let roomName = 'Room_' + msg;
+            if (!rooms.includes(roomName)) {
+                //insert room number to list
+                rooms.push(roomName);
+            }
+            socket.join(roomName);
+            io.to(roomName).emit('response_room_message_2', "방에 입장하였습니다.");
+        });
+
+        // chat to room2
+        socket.on('req_room_message_2', async (msg) => {
+            let userCurrentRoom = getUserCurrentRoom(socket);
+            io.to(userCurrentRoom).emit('response_room_message_2', msg);
+        });
+
+        // disconnect log
+        socket.on('disconnect', async () => {
+            console.log('user disconnected');
+        });
     });
 
-    socket.on('disconnect', async () => {
-        console.log('user disconnected');
-    });
-});
 
+    // FOR TEST CODE
+    (async function () {
+    })();
 
-// TEST CODE GOES HERE
-(async function(){
-})();
-
-function getUserCurrentRoom(socket){
-    let currentRoom = '';
-    //let socketRooms = Object.keys(socket.rooms);
-    const rooms = socket.rooms;
-    console.log(socket.rooms);
-
-    rooms.forEach(room => {
-        if(room.indexOf('Room_') == 0){
-            currentRoom = room;
-        }
-    });
-    console.log(currentRoom);
-    return currentRoom;
-}
+    // GET ROOM NAME
+    function getUserCurrentRoom(socket) {
+        let currentRoom = '';
+        const rooms = socket.rooms;
+        rooms.forEach(room => {
+            //PARSING ROOM NAME
+            if (room.indexOf('Room_') == 0) {
+                currentRoom = room;
+            }
+        });
+        return currentRoom;
+    }
 };

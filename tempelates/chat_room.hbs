@@ -6,11 +6,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="">
 </head>
+<script>
+    $(document).ready(function(){
+    $(#header).load("/header.html");
+    //$(#footer).load("/footer.html");
+});
+</script>
 <body>
 
-    <h1>chat room</h1>
-    <p>{{naming}}</p>
+    <h1>chat_room</h1>
+    <p>방번호: {{roomNum}}</p>
+
+    <!-- 방선택 -->
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body">
+            {{!-- <div class="input-group mb-1">
+              <select id="select-room" class="form-control">
+                <option value="none" selected="selected">방을 선택해주세요</option>
+                <!-- 수동으로 만들어진 채팅 방 -->
+                <option value="test-room">테스트 방</option>
+              </select>
+              <div class="input-group-append">
+                <button id="select-room-button" class="btn btn-success" placeholder="message">Select</button>
+              </div>
+            </div> --}}
+            <form action="">
+              <div class="input-group mb-1">
+                <input type="text" class="form-control" id="room-message" autocomplete="off" />
+                <div class="input-group-append">
+                  <button id="room-msg-send" class="btn btn-primary" placeholder="message">Send</button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer">
+            <ul id="room-messages"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      $(() => {
+        /** start socket **/
+        const socket = io();
+        let roomName = $('#select-room').val();
+        console.log("join_room_" + {{roomNum}});
+        
+        socket.emit('join_room_' + {{roomNum}}, "room_" + {{roomNum}});
+
+        socket.on('join_room_' + {{roomNum}}, (res) => {
+          $('#room-messages').prepend($('<li>').text(res));
+        });
+        $('#room-msg-send').click(() => {
+          socket.emit('req_room_message_'+ {{roomNum}}, $('#room-message').val());
+          $('#room-message').val('');
+          return false;
+        });
+
+        socket.on('response_room_message_' + {{roomNum}}, (res) => {
+          console.log(res);
+          $('#room-messages').prepend($('<li>').text(res));
+        });
+      });   
+    </script>
     
 </body>
 </html>
