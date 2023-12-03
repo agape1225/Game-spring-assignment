@@ -17,16 +17,13 @@
 <body>
 
     <h1>chat_room</h1>
-    <p>{{roomNum}}</p>
+    <p>방번호: {{roomNum}}</p>
 
     <!-- 방선택 -->
       <div class="col-lg-8">
         <div class="card">
-          <div class="card-header">
-            방선택
-          </div>
           <div class="card-body">
-            <div class="input-group mb-1">
+            {{!-- <div class="input-group mb-1">
               <select id="select-room" class="form-control">
                 <option value="none" selected="selected">방을 선택해주세요</option>
                 <!-- 수동으로 만들어진 채팅 방 -->
@@ -35,7 +32,7 @@
               <div class="input-group-append">
                 <button id="select-room-button" class="btn btn-success" placeholder="message">Select</button>
               </div>
-            </div>
+            </div> --}}
             <form action="">
               <div class="input-group mb-1">
                 <input type="text" class="form-control" id="room-message" autocomplete="off" />
@@ -56,7 +53,7 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
       $(() => {
-        /** Socket Starts **/
+        /** start socket **/
         const socket = io();
         let roomName = $('#select-room').val();
         console.log("join_room_" + {{roomNum}});
